@@ -1,14 +1,14 @@
 class Artist:
 
 
-    def __init__(self, name, city, date_joined, rating, discipline) -> None:
+    def __init__(self, name, city, date_joined, rating, discipline, requests = [], ratings =[]) -> None:
         self.name:str = name
         self.city:str = city
         self.date_joined:str = date_joined
         self.rating:(int, float) = rating
         self.discipline:str = discipline
-        self.requests = []
-        self.ratings = []
+        self.requests = requests
+        self.ratings = ratings
 
     # ***********************NAME****************************************
     @property
@@ -35,7 +35,8 @@ class Artist:
         valid_length = 2 <= len(city) <= 20
         if is_string and valid_length:
             self._city = city
-        raise Exception("City must be a string between 2 and 20 characters.")
+        else:
+            raise Exception("City must be a string between 2 and 20 characters.")
 
 # *************************************DATE**********************************
     @property
@@ -44,7 +45,7 @@ class Artist:
 
     @date_joined.setter
     def date_joined(self, date_joined):
-        is_string = isinstance(type, str)
+        is_string = isinstance(date_joined, str)
         valid_date_length = len(date_joined) == 10
         valid_format = date_joined.index("/") == 2
         if is_string and valid_date_length and valid_format:
