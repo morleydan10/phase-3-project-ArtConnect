@@ -52,6 +52,7 @@ class Request:
             raise Exception("Date must be a string in MM/DD/YYYY format.")
 
 # *********************************COMPENSATION********************************
+# consider changing the conditions for the compensation, could be written $5000 or $50/hr
 
     @property
     def compensation(self):
