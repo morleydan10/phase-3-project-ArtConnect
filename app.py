@@ -1,12 +1,38 @@
 from nicegui import ui
+import json
+from lib.Artist import Artist
+from lib.Business import Business
+from lib.Request import Request
+
+artist_profiles = []
+business_profiles = []
+business_requests= []
+
+with open('artist_profiles.json', 'r') as file:
+    artist_profiles_json = json.load(file)
+    for a_profile in artist_profiles_json:
+        artist = Artist(name='name', city='city', discipline='discipline', rating=None)
+        artist_profiles.append(artist)
+
+with open('business_profiles.json', 'r') as file:
+    business_profiles_json = json.load(file)
+    for b_profile in business_profiles_json:
+        business = Business(name='name', location='city', type='type', rating=None)
+        business_profiles.append(business)
+
+with open('business_requests.json', 'r') as file:
+    business_requests_json = json.load(file)
+    for b_request in business_requests_json:
+        business_request = Request(business='business', city='city', description='description', compensation='compensation')
+        business_requests.append(business_request)
 
 # **********************************HOME PAGE**************************************
 @ui.page('/')
 def home_page():
 
     with ui.header().classes(replace='row items-center') as header:
-        ui.label('ArtConnect').style('color: white; font-size: 500%')
-        ui.button(on_click=lambda: left_drawer.toggle(), icon='menu').props('flat color=white').style('position: flex')
+        ui.label('ArtConnect').style('color: white; font-size: 500%; padding: 15px')
+        # ui.button(on_click=lambda: left_drawer.toggle(), icon='menu').props('flat color=white').style('position: flex')
 
 # Creates side menu
     # with ui.left_drawer().classes('bg-blue-100') as left_drawer:
@@ -14,19 +40,22 @@ def home_page():
     
 
 # URLs for routing on homepage
-    url_request = 'http://localhost:8080/create_request'
+    
     url_create_profile_artist = 'http://localhost:8080/create_artist_profile'
     url_create_profile_business = 'http://localhost:8080/create_business_profile'
     url_profile_artist = 'http://localhost:8080/artist_profile'
     url_profile_business = 'http://localhost:8080/business_profile'
 
+    ui.label('Welcome to ArtConnect, where local artists and small businesses can collaborate on amazing new projects!').style('font-size: 40px; text-align: center')
+
 
     
-    ui.label('New Artist?').style('color: black; font-size: 175%')
-    ui.button('Create Profile', on_click = lambda: ui.open(url_create_profile_artist))
+    with ui.column().style('align-items: center'):
+        ui.label('New Artist?').style('color: black; font-size: 175%')
+        ui.button('Create Profile', on_click = lambda: ui.open(url_create_profile_artist))
 
     ui.label('New Business?').style('color: black; font-size: 175%')
-    ui.button('Create Profile', on_click = lambda: ui.open(url_create_profile_artist))
+    ui.button('Create Profile', on_click = lambda: ui.open(url_create_profile_business))
 
     ui.label('Already have a profile?').style('color: black; font-size: 150%')
 
@@ -37,34 +66,86 @@ def home_page():
 # ******************************CREATE REQUEST************************************
 @ui.page('/create_request')
 def create_request():
-
     with ui.header().classes(replace='row items-center') as header:
-        ui.label('ArtConnect').style('color: white; font-size: 500%')
-        ui.button(on_click=lambda: left_drawer.toggle(), icon='menu').props('flat color=white').style('position: flex')
+        ui.label('ArtConnect').style('color: white; font-size: 500%; padding: 15px')
 
     url = 'http://localhost:8080/'
-    ui.button('Home', on_click = lambda: ui.open(url))
+    ui.button('Home', on_click=lambda: ui.open(url))
     ui.label('Create Request here!').style('font-size: 150%')
-    ui.input(label= 'Name', placeholder = 'Name Here')
-    ui.input(label= 'City', placeholder= 'City Here')
-    ui.textarea(label = 'Description', placeholder= 'Provide a short desrcription of the job... i.e. Mural on side of building').classes()
-    ui.input(label= 'Compensation', placeholder = 'i.e. $500 or $40/hr')
+    business_name = ui.input(label='Name', placeholder='Name Here')
+    city_name = ui.input(label='City', placeholder='City Here')
+    request_description = ui.textarea(label='Description', placeholder='Provide a short description of the job... i.e. Mural on the side of the building').classes()
+    request_compensation = ui.input(label='Compensation', placeholder='i.e. $500 or $40/hr')
+    submit_button = ui.button('Submit', on_click=lambda: submit_request(
+        business_name.value,
+        city_name.value,
+        request_description.value,
+        request_compensation.value
+    ))
+
+    def submit_request(business_name, city_name, request_description, request_compensation):
+
+        json_data_business_requests = {
+            'Business': business_name,
+            'city': city_name,
+            'description': request_description,
+            'compensation': request_compensation
+        }
+
+        business_requests.append(json_data_business_requests)
+
+        save_requests_to_json()
+
+
+        ui.notify("Request Submitted")
+
+    def save_requests_to_json():
+
+        with open('business_requests.json', 'w') as json_file:
+            json.dump(business_requests, json_file, indent=2)
 
 # ************************CREATE ARTIST PROFILE*********************************
 @ui.page('/create_artist_profile')
 def create_profile():
 
     with ui.header().classes(replace='row items-center') as header:
-        ui.label('ArtConnect').style('color: white; font-size: 500%')
-        ui.button(on_click=lambda: left_drawer.toggle(), icon='menu').props('flat color=white').style('position: flex')
+        ui.label('ArtConnect').style('color: white; font-size: 500%; padding: 15px')
+        # ui.button(on_click=lambda: left_drawer.toggle(), icon='menu').props('flat color=white').style('position: flex')
 
     url = 'http://localhost:8080/'
     ui.button('Home', on_click = lambda: ui.open(url))
-    ui.input(label= 'Name', placeholder = 'Name Here')
-    ui.input(label= 'City', placeholder= 'City Here')
-    ui.input(label = 'Discipline', placeholder= 'i.e. Paint, Photography, Video, etc.')
-    ui.upload(on_upload=lambda e: ui.notify(f'Uploaded {e.name}')).classes('max-w-full')
-    ui.button('Submit', on_click = lambda: ui.submit())
+    name_input = ui.input(label= 'Name', placeholder = 'Name Here')
+    city_input = ui.input(label= 'City', placeholder= 'City Here')
+    discipline_input = ui.input(label = 'Discipline', placeholder= 'i.e. Paint, Photography, Video, etc.')
+
+    profile_image = ui.upload(on_upload=lambda e: ui.notify(f'Uploaded {e.name}')).classes('max-w-full')
+    submit_button = ui.button('Submit', on_click=lambda: submit_profile(
+        name_input.value,
+        city_input.value,
+        discipline_input.value,
+        profile_image
+    ))
+
+
+    def submit_profile(name, city, discipline, image):
+
+        _json_data_artist = {
+            'name': name,
+            'city': city,
+            'discipline': discipline,
+            'image': str(image),  # Convert the profile_image object to a string
+        }
+
+        artist_profiles.append(_json_data_artist)
+
+        save_artist_profiles_to_json()
+
+        ui.notify("Information Submitted")
+
+    def save_artist_profiles_to_json():
+
+        with open('artist_profiles.json', 'w') as json_file:
+            json.dump(artist_profiles, json_file, indent=2)
 
 # ********************************ARTIST PROFILE**********************************
 @ui.page('/artist_profile/')
@@ -80,20 +161,27 @@ def artist_profile():
     #         'int': request_data.compensation}]
     
     with ui.header().classes(replace='row items-center') as header:
-        ui.label('ArtConnect').style('color: white; font-size: 500%')
-        ui.button(on_click=lambda: left_drawer.toggle(), icon='menu').props('flat color=white').style('position: flex')
+        ui.label('ArtConnect').style('color: white; font-size: 500%; padding: 15px')
+        # ui.button(on_click=lambda: left_drawer.toggle(), icon='menu').props('flat color=white').style('position: flex')
     
     url = 'http://localhost:8080/'
     ui.button('Home', on_click = lambda: ui.open(url))
     
-    with ui.tabs() as tabs:
-        profile_tab = ui.tab('My Profile')
-        request_tab = ui.tab('My Requests')
-        # , on_click= load_requests()
-        portfolio_tab = ui.tab('My Portfolio')
+    ui.label('Your Profile:').style('font-size: 150%; font-weight: bold')
+    with ui.row().style('align-content: flex; gap: 20px; align-items: center'):
+        with ui.avatar().style('font-size: 100px'):
+            ui.image(f'User Pic')
+        ui.label(f'User name').style('font-size: 50px;  padding: 10px')
+        ui.label('Rating: ').style('font-size: 30px;')
+        ui.icon('star').style('font-size: 40px; color: yellow')
+            
+    ui.label(f'User City/Location').style('font-size: 150%')
+    ui.label(f'User Discipline').style('font-size: 150%')
+    ui.label(f'User Bio').style('font-size: 150%')
+    
     
 
-    ui.label('Your Requests:').style('font-size: 150%')
+    ui.label('Your Requests:').style('font-size: 150%; font-weight: bold')
     grid = ui.aggrid({
     'defaultColDef': {'flex': 10},
     'columnDefs': [
@@ -110,87 +198,102 @@ def artist_profile():
     ],
     'rowSelection': 'multiple',
 }).classes('max-h-600')
-        #     grid = ui.aggrid({
-        #     'columnDefs': [
-        #         {'headerName': 'Business', 'field': 'name'},
-        #         {'headerName': 'Type', 'field': 'type'},
-        #         {'headerName': 'Date', 'field': 'date'},
-        #         {'headerName': 'Compensation', 'field': 'int'},
-        #     ],
-        #     'rowData': [],
-        # }).style(
-        #     'font-size: 50%').bind_visibilty(request_tab)
 
-            # '.custom-header': {'font-weight': 'bold', 'font-size': '16px'})
-            # .custom-header({
-            #     'font-weight': 'bold', 'font-size': '16px', 'color': '#333'
-            #     }
-            # )
+    ui.label('Your Portfolio:').style('font-size: 150%; font-weight: bold')
+    ui.image()
     
 
 # ****************************CREATE BUSINESS PROFILE********************************
-@ui.page('/create_artist_profile')
+@ui.page('/create_business_profile')
 def create_profile():
 
     with ui.header().classes(replace='row items-center') as header:
-        ui.label('ArtConnect').style('color: white; font-size: 500%')
-        ui.button(on_click=lambda: left_drawer.toggle(), icon='menu').props('flat color=white').style('position: flex')
+        ui.label('ArtConnect').style('color: white; font-size: 500%; padding: 15px')
+        # ui.button(on_click=lambda: left_drawer.toggle(), icon='menu').props('flat color=white').style('position: flex')
 
     url = 'http://localhost:8080/'
     ui.button('Home', on_click = lambda: ui.open(url))
-    ui.input(label= 'Name', placeholder = 'Name Here')
-    ui.input(label= 'City', placeholder= 'City Here')
-    ui.input(label = 'Discipline', placeholder= 'i.e. Paint, Photography, Video, etc.')
-    ui.upload(on_upload=lambda e: ui.notify(f'Uploaded {e.name}')).classes('max-w-full')
-    ui.button('Submit', on_click = lambda: ui.submit())
+    name_input =ui.input(label= 'Name', placeholder = 'Name Here')
+    city_input = ui.input(label= 'City', placeholder= 'City Here')
+    type_input = ui.input(label = 'Type', placeholder= 'i.e. Restaurant, Retail, Commercial office, etc.')
+    # ui.upload(on_upload=lambda e: ui.notify(f'Uploaded {e.name}')).classes('max-w-full')
+    submit_button = ui.button('Submit', on_click=lambda: submit_profile(
+        name_input.value,
+        city_input.value,
+        type_input.value,
+        # profile_image
+    ))
+
+
+    def submit_profile(name, city, type):
+
+        _json_data_business = {
+            'name': name,
+            'city': city,
+            'type': type,
+            # 'image': str(image),  # Convert the profile_image object to a string
+        }
+
+        business_profiles.append(_json_data_business)
+
+        save_business_profiles_to_json()
+
+        ui.notify("Information Submitted")
+
+    def save_business_profiles_to_json():
+
+        with open('business_profiles.json', 'w') as json_file:
+            json.dump(business_profiles, json_file, indent=2)
 
 # ******************************BUSINESS PROFILE*********************************
 @ui.page('/business_profile/')
 def business_profile():
 
-    # def load_requests():
-    #     from lib.Artist import Artist
-    #     request_data = Artist.requests
-    #     grid.options['rowData'] = [
-    #         {'name': request_data.name, 
-    #         'type': request_data.type, 
-    #         'date': request_data.date,
-    #         'int': request_data.compensation}]
+    def load_requests():
+        grid.options['rowData'] = business_requests
+        
     
     with ui.header().classes(replace='row items-center') as header:
-        ui.label('ArtConnect').style('color: white; font-size: 500%')
-        ui.button(on_click=lambda: left_drawer.toggle(), icon='menu').props('flat color=white').style('position: flex')
+        ui.label('ArtConnect').style('color: white; font-size: 500%; padding: 15px')
+        # ui.button(on_click=lambda: left_drawer.toggle(), icon='menu').props('flat color=white').style('position: flex')
     
     url = 'http://localhost:8080/'
     ui.button('Home', on_click = lambda: ui.open(url))
     
-    with ui.tabs() as tabs:
-        profile_tab = ui.tab('Profile')
-        request_tab = ui.tab('Requests')
+    # with ui.tabs() as tabs:
+    #     profile_tab = ui.tab('Profile')
+    #     request_tab = ui.tab('Requests')
         # , on_click= load_requests()
         
+    url_request = 'http://localhost:8080/create_request'
+
+    ui.label('Your Profile:').style('font-size: 150%')
+    with ui.row().style('align-content: flex; gap: 20px; align-items: center'):
+        with ui.avatar().style('font-size: 100px'):
+            ui.image(f'User Pic')
+        business_name = ui.label(f'{business.name}').style('font-size: 50px;  padding: 10px')
+        # **RATING**
+        with ui.label('Rating: ').style('font-size: 30px;'):
+            ui.icon('star').style('font-size: 40px; color: yellow; border-color: black; border-weight: 5px')
     
-    ui.button('Create request', on_click = lambda: ui.open(url_request))
+    business_location = ui.label(f'{business.location}').style('font-size: 150%')
+    business_type = ui.label(f'{business.type}').style('font-size: 150%')
 
     ui.label('Your Requests:').style('font-size: 150%')
+    ui.button('Create request', on_click = lambda: ui.open(url_request))
     grid = ui.aggrid({
-    'defaultColDef': {'flex': 10},
-    'columnDefs': [
-        {'headerName': 'Artist', 'field': 'name'},
-        {'headerName': 'Type', 'field': 'type'},
-        {'headerName': 'Date', 'field': 'date'},
-        {'headerName': 'Compensation', 'field': 'comp'},
-        {'headerName': 'Parent', 'field': 'parent', 'hide': True},
-    ],
-    'rowData': [
-        {'name': 'Emily A.', 'type': 'Paint-canvas', 'date': '01/01/2024', 'comp': '$200'},
-        {'name': 'Brad B.', 'type': 'Paint-spray', 'date': '01/02/2024', 'comp': '$50/hr'},
-        {'name': 'Chelsea C.', 'type': 'Photo', 'date': '01/03/2024', 'comp': '$500'},
-    ],
-    'rowSelection': 'multiple',
-}).classes('max-h-600')
+        'defaultColDef': {'flex': 10},
+        'columnDefs': [
+            {'headerName': 'Business', 'field': 'Business'},
+            {'headerName': 'City', 'field': 'city'},
+            {'headerName': 'Description', 'field': 'description'},
+            {'headerName': 'Compensation', 'field': 'compensation'},
+        ],
+        'rowSelection': 'multiple',
+    }).classes('max-h-600')
 
-
+    # Call load_requests to load the initial data when the page is loaded
+    load_requests()
 
 # native=True runs app as a new window
 ui.run()

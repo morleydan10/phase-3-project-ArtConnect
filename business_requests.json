@@ -1,0 +1,14 @@
+[
+  {
+    "Business": "ABC Cafe",
+    "city": "Brooklyn",
+    "description": "Mural on wall inside cafe.\n\ndims= 20ftx15ft",
+    "compensation": "$2000"
+  },
+  {
+    "Business": "ABC Cafe",
+    "city": "Brooklyn",
+    "description": "Sculpture for front window\n\ndims: 20in x 15in x 5 in",
+    "compensation": "$300"
+  }
+]

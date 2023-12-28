@@ -1,11 +1,11 @@
 class Business:
 
 
-    def __init__(self, name, location, type, date_joined) -> None:
+    def __init__(self, name, city, type, rating) -> None:
         self.name:str = name
-        self.location:str = location
+        self.city:str = city
         self.type:str = type
-        self.date_joined:str = date_joined
+        self.rating = rating
         self.requests = []
         self.ratings = []
 
@@ -25,20 +25,20 @@ class Business:
         else:
             return Exception("Name must be a string between 2 and 20 characters.")
 
-# **************************************LOCATION**************************************
+# **************************************CITY**************************************
 
     @property
-    def location(self):
-        return self._location
+    def city(self):
+        return self._city
 
-    @location.setter
-    def location(self, location):
-        is_string = isinstance(location, str)
-        valid_length = 2 <= len(location) <= 20
+    @city.setter
+    def city(self, city):
+        is_string = isinstance(city, str)
+        valid_length = 2 <= len(city) <= 20
         if is_string and valid_length:
-            self._location = location
+            self._city = city
         else:
-            raise Exception("Location must be a string between 2 and 20 characters.")
+            raise Exception("City must be a string between 2 and 20 characters.")
 
 # *****************************************TYPE***************************************
 
@@ -56,20 +56,20 @@ class Business:
             raise Exception("Type must be a string between 2 and 20 characters.")
 
 # ***********************************DATE_JOINED**********************************
-# Will automatically be assigned when profile is made
-    @property
-    def date_joined(self):
-        return self._date_joined
+# # Will automatically be assigned when profile is made
+#     @property
+#     def date_joined(self):
+#         return self._date_joined
 
-    @date_joined.setter
-    def date_joined(self, date_joined):
-        is_string = isinstance(type, str)
-        valid_date_length = len(date_joined) == 10
-        valid_format = date_joined.index("/") == 2
-        if is_string and valid_date_length and valid_format:
-            self._date_joined = date_joined
-        else:
-            raise Exception("Date must be a string in MM/DD/YYYY format.")
+#     @date_joined.setter
+#     def date_joined(self, date_joined):
+#         is_string = isinstance(type, str)
+#         valid_date_length = len(date_joined) == 10
+#         valid_format = date_joined.index("/") == 2
+#         if is_string and valid_date_length and valid_format:
+#             self._date_joined = date_joined
+#         else:
+#             raise Exception("Date must be a string in MM/DD/YYYY format.")
 
 # **********************************METHODS****************************************
 
@@ -88,4 +88,16 @@ class Business:
 
 
     def avergage_rating(self):
-        pass
+        rating_counter= 0
+        for rating in self.ratings:
+            rating_counter += rating
+        average_rating = rating_counter / len(self.ratings)
+        return average_rating
+    
+    # **************to dict*************************
+
+    def to_dict(self):
+        return {"name":self.name,
+                "city": self.city,
+                "type": self.type,
+                "rating": self.rating}

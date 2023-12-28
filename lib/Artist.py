@@ -1,10 +1,9 @@
 class Artist:
 
 
-    def __init__(self, name, city, date_joined, rating, discipline, requests = [], ratings =[]) -> None:
+    def __init__(self, name, city, rating, discipline, requests = [], ratings =[]) -> None:
         self.name:str = name
         self.city:str = city
-        self.date_joined:str = date_joined
         self.rating:(int, float) = rating
         self.discipline:str = discipline
         self.requests = requests
@@ -38,20 +37,20 @@ class Artist:
         else:
             raise Exception("City must be a string between 2 and 20 characters.")
 
-# *************************************DATE**********************************
-    @property
-    def date_joined(self):
-        return self._date_joined
+# # *************************************DATE**********************************
+#     @property
+#     def date_joined(self):
+#         return self._date_joined
 
-    @date_joined.setter
-    def date_joined(self, date_joined):
-        is_string = isinstance(date_joined, str)
-        valid_date_length = len(date_joined) == 10
-        valid_format = date_joined.index("/") == 2
-        if is_string and valid_date_length and valid_format:
-            self._date_joined = date_joined
-        else:
-            raise Exception("Date must be a string in MM/DD/YYYY format.")
+#     @date_joined.setter
+#     def date_joined(self, date_joined):
+#         is_string = isinstance(date_joined, str)
+#         valid_date_length = len(date_joined) == 10
+#         valid_format = date_joined.index("/") == 2
+#         if is_string and valid_date_length and valid_format:
+#             self._date_joined = date_joined
+#         else:
+#             raise Exception("Date must be a string in MM/DD/YYYY format.")
 
 # ***************************************RATING*********************************
     @property
@@ -83,4 +82,16 @@ class Artist:
 
 
     def avergage_rating(self):
-        pass
+        rating_counter= 0
+        for rating in self.ratings:
+            rating_counter += rating
+        average_rating = rating_counter / len(self.ratings)
+        return average_rating
+    
+# **************to dict*************************
+
+    def to_dict(self):
+        return {"name":self.name,
+                "city": self.city,
+                "discipline": self.discipline,
+                "rating": self.rating}
