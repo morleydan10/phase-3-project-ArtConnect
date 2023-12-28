@@ -152,7 +152,7 @@ def create_profile():
     )
 
     profile_image = ui.upload(
-        on_upload=lambda e: ui.notify(f"Uploaded {e.name}")
+        on_upload=lambda e: ui.notify("Uploaded image")
     ).classes("max-w-full")
     submit_button = ui.button(
         "Submit",
@@ -183,10 +183,8 @@ def create_profile():
 # ********************************ARTIST PROFILE**********************************
 @ui.page("/artist_profile/")
 def artist_profile():
-    # def load_requests():
-    #     from lib.Artist import Artist
-    #     request_data = Artist.requests
-    #     grid.options['rowData'] = []
+    def load_requests():
+        grid.options["rowData"] = [br.to_dict() for br in business_requests]
 
     with ui.header().classes(replace="row items-center") as header:
         ui.label("ArtConnect").style("color: white; font-size: 500%; padding: 15px")
@@ -199,43 +197,32 @@ def artist_profile():
     with ui.row().style("align-content: flex; gap: 20px; align-items: center"):
         with ui.avatar().style("font-size: 100px"):
             ui.image(f"User Pic")
-        ui.label(f"User name").style("font-size: 50px;  padding: 10px")
+        artist_name = ui.label(f"{artist.name}").style("font-size: 50px;  padding: 10px")
         ui.label("Rating: ").style("font-size: 30px;")
         ui.icon("star").style("font-size: 40px; color: yellow")
 
-    ui.label(f"User City/Location").style("font-size: 150%")
-    ui.label(f"User Discipline").style("font-size: 150%")
-    ui.label(f"User Bio").style("font-size: 150%")
+    artist_city = ui.label(f"{artist.city}").style("font-size: 20px")
+    artist_discipline = ui.label(f"{artist.discipline}").style("font-size: 20px")
+    with ui.label(f"User Bio").style("font-size: 20px"):
+        ui.label("Hi I'm Jane. I paint well. Hire me.").style("font-size: 14px")
 
-    ui.label("Your Requests:").style("font-size: 150%; font-weight: bold")
+
+    ui.label("Your Requests:").style("font-size: 150%; font-weight: bold; padding: 10px")
     grid = ui.aggrid(
         {
             "defaultColDef": {"flex": 10},
             "columnDefs": [
-                {"headerName": "Business", "field": "name"},
-                {"headerName": "Type", "field": "type"},
-                {"headerName": "Date", "field": "date"},
-                {"headerName": "Compensation", "field": "comp"},
-                {"headerName": "Parent", "field": "parent", "hide": True},
-            ],
-            "rowData": [
-                {
-                    "name": "A",
-                    "type": "Paint-canvas",
-                    "date": "01/01/2024",
-                    "comp": "$200",
-                },
-                {
-                    "name": "B",
-                    "type": "Paint-spray",
-                    "date": "01/02/2024",
-                    "comp": "$50/hr",
-                },
-                {"name": "C", "type": "Photo", "date": "01/03/2024", "comp": "$500"},
+                {"headerName": "Business", "field": "business"},
+                {"headerName": "City", "field": "city"},
+                {"headerName": "Description", "field": "description"},
+                {"headerName": "Compensation", "field": "compensation"},
+                # {"headerName": "Parent", "field": "parent", "hide": True},
             ],
             "rowSelection": "multiple",
         }
-    ).classes("max-h-600")
+    ).classes("max-h-100")
+
+    load_requests()
 
     ui.label("Your Portfolio:").style("font-size: 150%; font-weight: bold")
     ui.image()
@@ -290,7 +277,10 @@ def create_profile():
 def business_profile():
     def load_requests():
         # Have to convert the objects into python dictionaries so they can be loaded into the grid
-        grid.options["rowData"] = [br.to_dict() for br in business_requests]
+        # grid.options["rowData"] = [br.to_dict() for br in business_requests]
+        
+        grid.options["rowData"] = [br.to_dict() for br in business_requests if br.business == business.name]
+
 
     with ui.header().classes(replace="row items-center") as header:
         ui.label("ArtConnect").style("color: white; font-size: 500%; padding: 15px")

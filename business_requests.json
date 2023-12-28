@@ -4,5 +4,11 @@
     "city": "Brooklyn",
     "description": "Mural on wall inside cafe\n\ndims: 20ft x 15ft ",
     "compensation": "$750"
+  },
+  {
+    "business": "XYZ Cafe",
+    "city": "Dumbo",
+    "description": "Mural on wall outside cafe\n\ndims= 25ft x 20 ft",
+    "compensation": "$1200"
   }
 ]
