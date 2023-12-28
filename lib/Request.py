@@ -2,12 +2,12 @@ class Request:
 
 
     def __init__(self, business, city, description, compensation) -> None:
-        # self._artist = artist
         self._business = business
         self.city = city
         self.description = description
-        # self._date:str = date
         self._compensation: str|float = compensation
+        # self._artist = artist
+        # self._date:str = date
 
 # *********************ARTIST********************************************
     # @property
