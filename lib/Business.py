@@ -1,11 +1,12 @@
 class Business:
 
 
-    def __init__(self, name, city, type, rating) -> None:
+    def __init__(self, name, city, type, image) -> None:
         self.name:str = name
         self.city:str = city
         self.type:str = type
-        self.rating = rating
+        self.image = image
+        # self.rating = rating
         self.requests = []
         self.ratings = []
 
@@ -54,6 +55,19 @@ class Business:
             self._type = type
         else:
             raise Exception("Type must be a string between 2 and 20 characters.")
+# *************************************IMAGE*************************************
+    @property
+    def image(self):
+        return self._image
+
+    @image.setter
+    def image(self, image):
+        self._image = image
+        # is_string = isinstance(image, str)
+        # valid_length = 2 <= len(image) <= 20
+        # if is_string and valid_length:
+        # else:
+        #     raise Exception("Image must be a string between 2 and 20 characters.")
 
 # ***********************************DATE_JOINED**********************************
 # # Will automatically be assigned when profile is made
@@ -100,4 +114,5 @@ class Business:
         return {"name":self.name,
                 "city": self.city,
                 "type": self.type,
-                "rating": self.rating}
+                # "rating": self.rating,
+                "image": self.image}

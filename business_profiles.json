@@ -2,6 +2,7 @@
   {
     "name": "ABC Cafe",
     "city": "Brooklyn",
-    "type": "Restaurant"
+    "type": "Restaurant",
+    "image": "http://www.kansastravel.org/overlandpark/11abccafe1.JPG"
   }
 ]

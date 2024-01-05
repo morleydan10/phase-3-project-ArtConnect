@@ -1,11 +1,11 @@
 class Artist:
 
 
-    def __init__(self, name, city, rating, discipline, requests = [], ratings =[]) -> None:
+    def __init__(self, name, city, discipline, image, requests = [], ratings =[]) -> None:
         self.name:str = name
         self.city:str = city
-        self.rating:(int, float) = rating
         self.discipline:str = discipline
+        self.image = image
         self.requests = requests
         self.ratings = ratings
 
@@ -51,16 +51,24 @@ class Artist:
 #             self._date_joined = date_joined
 #         else:
 #             raise Exception("Date must be a string in MM/DD/YYYY format.")
+# ***************************************IMAGE**********************************
+    @property
+    def image(self):
+        return self._image
+
+    @image.setter
+    def image(self, image):
+        self._image = image
 
 # ***************************************RATING*********************************
-    @property
-    def rating(self):
-        return self._rating
+    # @property
+    # def rating(self):
+    #     return self._rating
 
-    @rating.setter
-    def rating(self, rating):
-        # Add any validation logic if needed
-        self._rating = rating
+    # @rating.setter
+    # def rating(self, rating):
+    #     # Add any validation logic if needed
+    #     self._rating = rating
 
 # ************************************DISCIPLINE**********************************
     @property
@@ -81,17 +89,19 @@ class Artist:
         pass
 
 
-    def avergage_rating(self):
-        rating_counter= 0
-        for rating in self.ratings:
-            rating_counter += rating
-        average_rating = rating_counter / len(self.ratings)
-        return average_rating
+    def average_rating(self):
+        if not self.ratings:
+            average = 0  # No ratings, return 0 as default
+        else:
+            total = sum(self.ratings)
+            average = round(total / len(self.ratings))  # Round the average
+
+        self.rating = average  # Update the rating attribute
+        return average
     
 # **************to dict*************************
 
     def to_dict(self):
         return {"name":self.name,
                 "city": self.city,
-                "discipline": self.discipline,
-                "rating": self.rating}
+                "discipline": self.discipline}

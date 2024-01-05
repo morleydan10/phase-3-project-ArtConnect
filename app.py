@@ -11,24 +11,26 @@ business_requests = []
 with open("artist_profiles.json", "r") as file:
     artist_profiles_json = json.load(file)
     for a_profile in artist_profiles_json:
-        artist = Artist(
-            name=a_profile["name"],
-            city=a_profile["city"],
-            discipline=a_profile["discipline"],
-            rating=None,
-        )
+        artist = Artist(**a_profile)
+            # name=a_profile["name"],
+            # city=a_profile["city"],
+            # discipline=a_profile["discipline"],
         artist_profiles.append(artist)
+        print(artist.to_dict())
+
 
 with open("business_profiles.json", "r") as file:
     business_profiles_json = json.load(file)
     for b_profile in business_profiles_json:
-        business = Business(
-            name=b_profile["name"],
-            city=b_profile["city"],
-            type=b_profile["type"],
-            rating=None,
-        )
+        business = Business(**b_profile)
+            # name=b_profile["name"],
+            # city=b_profile["city"],
+            # type=b_profile["type"],
+            # image=b_profile["image"],
+            # rating=None
+        
         business_profiles.append(business)
+        print(business.to_dict())
 
 
 with open("business_requests.json", "r") as file:
@@ -151,25 +153,32 @@ def create_profile():
         label="Discipline", placeholder="i.e. Paint, Photography, Video, etc."
     )
 
-    profile_image = ui.upload(
-        on_upload=lambda e: ui.notify("Uploaded image")
-    ).classes("max-w-full")
+    profile_image = ui.input(label="Profile Image", placeholder="url here")
     submit_button = ui.button(
         "Submit",
         on_click=lambda: submit_profile(
-            name_input.value, city_input.value, discipline_input.value, profile_image
+            name_input.value, 
+            city_input.value, 
+            discipline_input.value, 
+            profile_image.value
         ),
     )
 
-    def submit_profile(name, city, discipline, image):
-        _json_data_artist = {
-            "name": name,
-            "city": city,
-            "discipline": discipline,
-            "image": str(image),  # Convert the profile_image object to a string
-        }
+    def submit_profile(name_input, city_input, discipline_input, profile_image):
+        new_artist_profile = Artist(
+            name=name_input,
+            city=city_input,
+            discipline=discipline_input,
+            image=profile_image
+        )
+        # _json_data_artist = {
+        #     "name": name,
+        #     "city": city,
+        #     "discipline": discipline,
+        #     "image": str(image),  # Convert the profile_image object to a string
+        # }
 
-        artist_profiles.append(_json_data_artist)
+        artist_profiles.append(new_artist_profile)
 
         save_artist_profiles_to_json()
 
@@ -177,7 +186,8 @@ def create_profile():
 
     def save_artist_profiles_to_json():
         with open("artist_profiles.json", "w") as json_file:
-            json.dump(artist_profiles, json_file, indent=2)
+            artist_profiles_json = [ap.to_dict() for ap in artist_profiles]
+            json.dump(artist_profiles_json, json_file, indent=2)
 
 
 # ********************************ARTIST PROFILE**********************************
@@ -195,16 +205,24 @@ def artist_profile():
 
     ui.label("Your Profile:").style("font-size: 150%; font-weight: bold")
     with ui.row().style("align-content: flex; gap: 20px; align-items: center"):
-        with ui.avatar().style("font-size: 100px"):
-            ui.image(f"User Pic")
+        with ui.avatar().style("font-size: 200px"):
+            ui.image(f"{artist.image}")
         artist_name = ui.label(f"{artist.name}").style("font-size: 50px;  padding: 10px")
-        ui.label("Rating: ").style("font-size: 30px;")
-        ui.icon("star").style("font-size: 40px; color: yellow")
+        # **RATING**
+        with ui.label("Rating: ").style("font-size: 30px;"):
+        #     average_rating = artist.average_rating()
+        #     for _ in range(average_rating):
+                star = ui.icon("star").style("font-size: 40px; color: gold")
 
-    artist_city = ui.label(f"{artist.city}").style("font-size: 20px")
-    artist_discipline = ui.label(f"{artist.discipline}").style("font-size: 20px")
-    with ui.label(f"User Bio").style("font-size: 20px"):
-        ui.label("Hi I'm Jane. I paint well. Hire me.").style("font-size: 14px")
+    with ui.grid(columns=2):
+        ui.label('City: ').style('font-size: 20px')
+        artist_city = ui.label(f"{artist.city}").style("font-size: 25px")
+
+        ui.label('Discipline: ').style('font-size: 20px')
+        artist_discipline = ui.label(f"{artist.discipline}").style("font-size: 25px")
+        
+        ui.label("Bio:").style("font-size: 20px")
+        artist_bio = ui.label("Hi I'm Jane. I paint well. Hire me.").style("font-size: 18px")
 
 
     ui.label("Your Requests:").style("font-size: 150%; font-weight: bold; padding: 10px")
@@ -242,34 +260,42 @@ def create_profile():
     type_input = ui.input(
         label="Type", placeholder="i.e. Restaurant, Retail, Commercial office, etc."
     )
-    # ui.upload(on_upload=lambda e: ui.notify(f'Uploaded {e.name}')).classes('max-w-full')
+    profile_image = ui.input(label="Profile Image", placeholder="url here")
+    
     submit_button = ui.button(
         "Submit",
         on_click=lambda: submit_profile(
             name_input.value,
             city_input.value,
             type_input.value,
-            # profile_image
+            profile_image.value
         ),
     )
 
-    def submit_profile(name, city, type):
-        _json_data_business = {
-            "name": name,
-            "city": city,
-            "type": type,
-            # 'image': str(image),  # Convert the profile_image object to a string
-        }
+    def submit_profile(name_input, city_input, type_input, profile_image):
+        # _json_data_business = {
+        #     "name": name,
+        #     "city": city,
+        #     "type": type,
+        #     'image': str(image),  # Convert the profile_image object to a string
+        # }
+        new_busines_profile = Business(
+            name=name_input,
+            city=city_input,
+            type=type_input,
+            image=profile_image
+        )
 
-        business_profiles.append(_json_data_business)
+        business_profiles.append(new_busines_profile)
 
         save_business_profiles_to_json()
-
+        
         ui.notify("Information Submitted")
 
     def save_business_profiles_to_json():
         with open("business_profiles.json", "w") as json_file:
-            json.dump(business_profiles, json_file, indent=2)
+            business_profiles_json = [bp.to_dict() for bp in business_profiles]
+            json.dump(business_profiles_json, json_file, indent=2)
 
 
 # ******************************BUSINESS PROFILE*********************************
@@ -298,19 +324,23 @@ def business_profile():
 
     ui.label("Your Profile:").style("font-size: 150%")
     with ui.row().style("align-content: flex; gap: 20px; align-items: center"):
-        with ui.avatar().style("font-size: 100px"):
-            ui.image(f"User Pic")
+        with ui.avatar().style("font-size: 200px"):
+            ui.image(f"{business.image}")
         business_name = ui.label(f"{business.name}").style(
             "font-size: 50px;  padding: 10px"
         )
         # **RATING**
         with ui.label("Rating: ").style("font-size: 30px;"):
             ui.icon("star").style(
-                "font-size: 40px; color: yellow; border-color: black; border-weight: 5px"
+                "font-size: 40px; color: gold; border-color: black; border-weight: 5px"
             )
+    
+    with ui.grid( columns=2):
+        ui.label('City: ').style('font-size: 20px')
+        business_location = ui.label(f"{business.city}").style("font-size: 25px")
 
-    business_location = ui.label(f"{business.city}").style("font-size: 150%")
-    business_type = ui.label(f"{business.type}").style("font-size: 150%")
+        ui.label('Type: ').style('font-size: 20px')
+        business_type = ui.label(f"{business.type}").style("font-size: 25px")
 
     ui.label("Your Requests:").style("font-size: 150%")
     ui.button("Create request", on_click=lambda: ui.open(url_request))
