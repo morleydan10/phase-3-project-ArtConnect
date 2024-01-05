@@ -63,22 +63,27 @@ def home_page():
     url_profile_artist = "http://localhost:8080/artist_profile"
     url_profile_business = "http://localhost:8080/business_profile"
 
-    ui.label(
-        "Welcome to ArtConnect, where local artists and small businesses can collaborate on amazing new projects!"
-    ).style("font-size: 40px; text-align: center")
-
     with ui.column().style("align-items: center"):
-        ui.label("New Artist?").style("color: black; font-size: 175%")
-        ui.button("Create Profile", on_click=lambda: ui.open(url_create_profile_artist))
+        ui.label(
+            "Welcome to ArtConnect, where local artists and small businesses can collaborate on amazing new projects!"
+        ).style("font-size: 40px; text-align: center")
 
-    ui.label("New Business?").style("color: black; font-size: 175%")
-    ui.button("Create Profile", on_click=lambda: ui.open(url_create_profile_business))
+        whitespace = ui.label('This is whitespace').style("color: white; font-size: 75px")
 
-    ui.label("Already have a profile?").style("color: black; font-size: 150%")
+        with ui.column().style("align-items: center"):
 
-    with ui.row():
-        ui.button("My Artist Profile", on_click=lambda: ui.open(url_profile_artist))
-        ui.button("My Business Profile", on_click=lambda: ui.open(url_profile_business))
+            with ui.column().style("align-items: center"):
+                ui.label("New Artist?").style("color: black; font-size: 40px")
+                ui.button("Create Artist Profile", on_click=lambda: ui.open(url_create_profile_artist))
+
+            ui.label("New Business?").style("color: black; font-size: 40px")
+            ui.button("Create Business Profile", on_click=lambda: ui.open(url_create_profile_business))
+
+            ui.label("Already have a profile?").style("color: black; font-size: 40px")
+
+            with ui.row():
+                ui.button("My Artist Profile", on_click=lambda: ui.open(url_profile_artist))
+                ui.button("My Business Profile", on_click=lambda: ui.open(url_profile_business))
 
 
 # ******************************CREATE REQUEST************************************
@@ -89,7 +94,7 @@ def create_request():
 
     url = "http://localhost:8080/"
     ui.button("Home", on_click=lambda: ui.open(url))
-    ui.label("Create Request here!").style("font-size: 150%")
+    ui.label("Create Request").style("font-size: 50px")
     business_name = ui.input(label="Name", placeholder="Name Here")
     city_name = ui.input(label="City", placeholder="City Here")
     request_description = ui.textarea(
@@ -147,6 +152,7 @@ def create_profile():
 
     url = "http://localhost:8080/"
     ui.button("Home", on_click=lambda: ui.open(url))
+    ui.label("Create Artist Profile").style("font-size: 50px")
     name_input = ui.input(label="Name", placeholder="Name Here")
     city_input = ui.input(label="City", placeholder="City Here")
     discipline_input = ui.input(
@@ -203,7 +209,7 @@ def artist_profile():
     url = "http://localhost:8080/"
     ui.button("Home", on_click=lambda: ui.open(url))
 
-    ui.label("Your Profile:").style("font-size: 150%; font-weight: bold")
+    ui.label("Your Profile:").style("font-size: 35px; font-weight: bold")
     with ui.row().style("align-content: flex; gap: 20px; align-items: center"):
         with ui.avatar().style("font-size: 200px"):
             ui.image(f"{artist.image}")
@@ -225,7 +231,7 @@ def artist_profile():
         artist_bio = ui.label("Hi I'm Jane. I paint well. Hire me.").style("font-size: 18px")
 
 
-    ui.label("Your Requests:").style("font-size: 150%; font-weight: bold; padding: 10px")
+    ui.label("Your Requests:").style("font-size: 35px; font-weight: bold; padding: 10px")
     grid = ui.aggrid(
         {
             "defaultColDef": {"flex": 10},
@@ -242,7 +248,7 @@ def artist_profile():
 
     load_requests()
 
-    ui.label("Your Portfolio:").style("font-size: 150%; font-weight: bold")
+    ui.label("Your Portfolio:").style("font-size: 35px; font-weight: bold")
     ui.image()
 
 
@@ -255,6 +261,7 @@ def create_profile():
 
     url = "http://localhost:8080/"
     ui.button("Home", on_click=lambda: ui.open(url))
+    ui.label("Create Business Profile").style("font-size: 50px")
     name_input = ui.input(label="Name", placeholder="Name Here")
     city_input = ui.input(label="City", placeholder="City Here")
     type_input = ui.input(
