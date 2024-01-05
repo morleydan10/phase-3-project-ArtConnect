@@ -329,7 +329,7 @@ def business_profile():
 
     url_request = "http://localhost:8080/create_request"
 
-    ui.label("Your Profile:").style("font-size: 150%")
+    ui.label("Your Profile:").style("font-size: 35px; font-weight: bold")
     with ui.row().style("align-content: flex; gap: 20px; align-items: center"):
         with ui.avatar().style("font-size: 200px"):
             ui.image(f"{business.image}")
@@ -349,7 +349,7 @@ def business_profile():
         ui.label('Type: ').style('font-size: 20px')
         business_type = ui.label(f"{business.type}").style("font-size: 25px")
 
-    ui.label("Your Requests:").style("font-size: 150%")
+    ui.label("Your Requests:").style("font-size: 35px; font-weight: bold")
     ui.button("Create request", on_click=lambda: ui.open(url_request))
     grid = ui.aggrid(
         {
